@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "a": {
+      "item": "minecraft:string"
+    },
+    "b": {
+      "item": "minecraft:stick"
+    },
+    "c": {
+      "item": "minecraft:leather"
+    }
+  },
+  "pattern": [
+    "aaa",
+    "bcb",
+    " b "
+  ],
+  "result": {
+    "count": 1,
+    "id": "torchlaunchermod:torch_launcher"
+  }
+}

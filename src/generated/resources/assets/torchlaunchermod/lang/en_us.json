@@ -1,0 +1,5 @@
+{
+  "entity.torchlaunchermod.torch_launcher_projectile_entity": "Torch Launcher Projectile",
+  "item.torchlaunchermod.torch_launcher": "Torch Launcher",
+  "itemGroup.torch_launcher_mod": "Torch Launcher Mod"
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "torchlaunchermod:item/torch_launcher",
+  "textures": {
+    "layer0": "torchlaunchermod:item/torch_launcher_pulling_0"
+  }
+}
