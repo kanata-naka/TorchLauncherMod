@@ -27,10 +27,4 @@ public class TorchLauncherModEntities {
   public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) {
     event.registerEntityRenderer(TORCH_LAUNCHER_PROJECTILE_ENTITY.get(), TorchLauncherProjectileEntityRenderer::new);
   }
-
-  @OnlyIn(Dist.CLIENT)
-  @SubscribeEvent
-  public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-    // event.registerLayerDefinition(ModelLayerLocations.TORCH_LAUNCHER_PROJECTILE_ENTITY, MikoPModel::createBodyLayer);
-  }
 }

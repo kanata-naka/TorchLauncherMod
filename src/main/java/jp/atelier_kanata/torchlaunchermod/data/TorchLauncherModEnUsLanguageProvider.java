@@ -15,6 +15,8 @@ public class TorchLauncherModEnUsLanguageProvider extends LanguageProvider {
   @Override
   protected void addTranslations() {
     add("itemGroup.torch_launcher_mod", "Torch Launcher Mod");
+    
+    add("torchlaunchermod.configuration.launchable_items", "Launchable items");
 
     add(TorchLauncherModItems.TORCH_LAUNCHER.get(), "Torch Launcher");
 

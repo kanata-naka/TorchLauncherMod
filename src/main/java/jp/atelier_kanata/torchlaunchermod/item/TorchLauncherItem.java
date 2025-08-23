@@ -3,8 +3,10 @@ package jp.atelier_kanata.torchlaunchermod.item;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
-import jp.atelier_kanata.torchlaunchermod.TorchLauncherMod;
+import jp.atelier_kanata.torchlaunchermod.Config;
 import jp.atelier_kanata.torchlaunchermod.entity.TorchLauncherProjectileEntity;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -33,7 +35,6 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
     }
 
     ItemStack projectileItemStack = player.getProjectile(weaponItemStack);
-    TorchLauncherMod.LOGGER.info("[TorchLauncherItem][releaseUsing] projectileItemStack: " + projectileItemStack.toString());
     if (projectileItemStack.isEmpty()) {
       return;
     }
@@ -49,7 +50,6 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
     }
 
     List<ItemStack> drewProjectileItemStackList = draw(weaponItemStack, projectileItemStack, player);
-    TorchLauncherMod.LOGGER.info("[TorchLauncherItem][releaseUsing] drewProjectileItemStackList: " + drewProjectileItemStackList.toString());
     if (level instanceof ServerLevel serverlevel && !drewProjectileItemStackList.isEmpty()) {
       this.shoot(serverlevel, player, player.getUsedItemHand(), weaponItemStack, drewProjectileItemStackList, power * 3.0F, 1.0F, false, null);
     }
@@ -101,7 +101,8 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
 
   @Override
   public Predicate<ItemStack> getAllSupportedProjectiles() {
-    return itemStack -> itemStack.is(Items.TORCH) || itemStack.is(Items.SOUL_TORCH);
+    // itemStack -> itemStack.is(Items.TORCH) || itemStack.is(Items.SOUL_TORCH)
+    return itemStack -> Config.LAUNCHABLE_ITEMS.get().stream().anyMatch(name -> BuiltInRegistries.ITEM.getKey(itemStack.getItem()).equals(ResourceLocation.parse(name)));
   }
 
   @Override

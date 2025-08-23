@@ -1,7 +1,6 @@
 package jp.atelier_kanata.torchlaunchermod.entity;
 
 import javax.annotation.Nullable;
-import jp.atelier_kanata.torchlaunchermod.TorchLauncherMod;
 import jp.atelier_kanata.torchlaunchermod.registry.TorchLauncherModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,10 +16,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -32,7 +33,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class TorchLauncherProjectileEntity extends Projectile {
-  private static final EntityDataAccessor<ItemStack> DATA_ID_ITEM = SynchedEntityData.defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.ITEM_STACK);
+  public static final EntityDataAccessor<ItemStack> DATA_ID_ITEM = SynchedEntityData.defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.ITEM_STACK);
 
   protected boolean inGround;
 
@@ -75,8 +76,6 @@ public class TorchLauncherProjectileEntity extends Projectile {
     }
 
     Direction direction = ((BlockHitResult) result).getDirection();
-    TorchLauncherMod.LOGGER
-        .info("[TorchLauncherProjectileEntity][onHitBlock] hit block: " + this.level().getBlockState(hitBlockPos).getBlock().toString() + ", direction: " + direction);
 
     BlockPos setBlockPos = switch (direction) {
       case UP -> hitBlockPos.above();
@@ -86,7 +85,6 @@ public class TorchLauncherProjectileEntity extends Projectile {
       case NORTH -> hitBlockPos.north();
       case DOWN -> hitBlockPos.below();
     };
-    TorchLauncherMod.LOGGER.info("[TorchLauncherProjectileEntity][onHitBlock] replace block: " + this.level().getBlockState(setBlockPos).getBlock().toString());
     if (!this.level().getBlockState(setBlockPos).canBeReplaced()) {
       dropItem();
     } else {
@@ -122,7 +120,7 @@ public class TorchLauncherProjectileEntity extends Projectile {
         return Blocks.SOUL_WALL_TORCH.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, direction);
       }
     } else {
-      return null;
+      return itemStack.getItem() instanceof BlockItem ? Block.byItem(itemStack.getItem()).defaultBlockState() : null;
     }
   }
 

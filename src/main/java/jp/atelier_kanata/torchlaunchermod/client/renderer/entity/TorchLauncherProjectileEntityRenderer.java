@@ -1,65 +1,54 @@
 package jp.atelier_kanata.torchlaunchermod.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import jp.atelier_kanata.torchlaunchermod.entity.TorchLauncherProjectileEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class TorchLauncherProjectileEntityRenderer extends EntityRenderer<TorchLauncherProjectileEntity> {
+  private final BlockRenderDispatcher dispatcher;
 
   public TorchLauncherProjectileEntityRenderer(Context context) {
     super(context);
+    this.dispatcher = context.getBlockRenderDispatcher();
   }
 
   public void render(TorchLauncherProjectileEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-    poseStack.pushPose();
-    poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) - 90.0F));
-    poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entity.xRotO, entity.getXRot())));
-
-    poseStack.mulPose(Axis.XP.rotationDegrees(45.0F));
-    poseStack.scale(0.05625F, 0.05625F, 0.05625F);
-    poseStack.translate(-4.0F, 0.0F, 0.0F);
-    VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.entityCutout(this.getTextureLocation(entity)));
-    PoseStack.Pose posestack$pose = poseStack.last();
-    this.vertex(posestack$pose, vertexconsumer, -7, -2, -2, 0.0F, 0.15625F, -1, 0, 0, packedLight);
-    this.vertex(posestack$pose, vertexconsumer, -7, -2, 2, 0.15625F, 0.15625F, -1, 0, 0, packedLight);
-    this.vertex(posestack$pose, vertexconsumer, -7, 2, 2, 0.15625F, 0.3125F, -1, 0, 0, packedLight);
-    this.vertex(posestack$pose, vertexconsumer, -7, 2, -2, 0.0F, 0.3125F, -1, 0, 0, packedLight);
-    this.vertex(posestack$pose, vertexconsumer, -7, 2, -2, 0.0F, 0.15625F, 1, 0, 0, packedLight);
-    this.vertex(posestack$pose, vertexconsumer, -7, 2, 2, 0.15625F, 0.15625F, 1, 0, 0, packedLight);
-    this.vertex(posestack$pose, vertexconsumer, -7, -2, 2, 0.15625F, 0.3125F, 1, 0, 0, packedLight);
-    this.vertex(posestack$pose, vertexconsumer, -7, -2, -2, 0.0F, 0.3125F, 1, 0, 0, packedLight);
-
-    for (int j = 0; j < 4; j++) {
-      poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-      this.vertex(posestack$pose, vertexconsumer, -8, -2, 0, 0.0F, 0.0F, 0, 1, 0, packedLight);
-      this.vertex(posestack$pose, vertexconsumer, 8, -2, 0, 0.5F, 0.0F, 0, 1, 0, packedLight);
-      this.vertex(posestack$pose, vertexconsumer, 8, 2, 0, 0.5F, 0.15625F, 0, 1, 0, packedLight);
-      this.vertex(posestack$pose, vertexconsumer, -8, 2, 0, 0.0F, 0.15625F, 0, 1, 0, packedLight);
+    BlockState blockState = Block.byItem(entity.getEntityData().get(TorchLauncherProjectileEntity.DATA_ID_ITEM).getItem()).defaultBlockState();
+    if (blockState.getRenderShape() == RenderShape.MODEL) {
+      Level level = entity.level();
+      if (blockState != level.getBlockState(entity.blockPosition()) && blockState.getRenderShape() != RenderShape.INVISIBLE) {
+        poseStack.pushPose();
+        BlockPos blockpos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
+        poseStack.translate(-0.5, 0.0, -0.5);
+        var model = this.dispatcher.getBlockModel(blockState);
+        for (var renderType : model.getRenderTypes(blockState, RandomSource.create(blockState.getSeed(BlockPos.ZERO)), net.neoforged.neoforge.client.model.data.ModelData.EMPTY))
+          this.dispatcher.getModelRenderer().tesselateBlock(level, model, blockState, blockpos, poseStack,
+              buffer.getBuffer(net.neoforged.neoforge.client.RenderTypeHelper.getMovingBlockRenderType(renderType)), false, RandomSource.create(),
+              blockState.getSeed(BlockPos.ZERO), OverlayTexture.NO_OVERLAY, net.neoforged.neoforge.client.model.data.ModelData.EMPTY, renderType);
+        poseStack.popPose();
+        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+      }
     }
-
-    poseStack.popPose();
-    super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
-  }
-
-  public void vertex(PoseStack.Pose pose, VertexConsumer consumer, int x, int y, int z, float u, float v, int normalX, int normalY, int normalZ, int packedLight) {
-    consumer.addVertex(pose, (float) x, (float) y, (float) z).setColor(-1).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, (float) normalX,
-        (float) normalZ, (float) normalY);
   }
 
   @Override
   public ResourceLocation getTextureLocation(TorchLauncherProjectileEntity entity) {
-    return ResourceLocation.withDefaultNamespace("textures/entity/projectiles/arrow.png");
+    return TextureAtlas.LOCATION_BLOCKS;
   }
 
 }
