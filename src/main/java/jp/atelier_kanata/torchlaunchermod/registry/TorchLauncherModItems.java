@@ -6,20 +6,18 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@EventBusSubscriber(modid = TorchLauncherMod.MODID)
+@EventBusSubscriber(modid = TorchLauncherMod.MODID, value = Dist.CLIENT)
 public class TorchLauncherModItems {
   public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(TorchLauncherMod.MODID);
 
   public static final DeferredItem<Item> TORCH_LAUNCHER = ITEMS.registerItem("torch_launcher", (prop) -> new TorchLauncherItem(prop.durability(384)));
 
-  @OnlyIn(Dist.CLIENT)
   @SubscribeEvent
   public static void registerItemProperties(FMLClientSetupEvent event) {
     ItemProperties.register(TORCH_LAUNCHER.get(), ResourceLocation.withDefaultNamespace("pulling"),
