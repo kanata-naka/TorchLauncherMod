@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class TorchLauncherModCreativeModeTabs {
+
   public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, TorchLauncherMod.MODID);
 
   public static final DeferredHolder<CreativeModeTab, CreativeModeTab> HOLOLIVE_MOD_TAB =
@@ -15,4 +16,5 @@ public class TorchLauncherModCreativeModeTabs {
           .icon(() -> TorchLauncherModItems.TORCH_LAUNCHER.get().getDefaultInstance()).displayItems((parameters, output) -> {
             TorchLauncherModItems.ITEMS.getEntries().forEach((entry) -> output.accept(entry.get()));
           }).build());
+
 }

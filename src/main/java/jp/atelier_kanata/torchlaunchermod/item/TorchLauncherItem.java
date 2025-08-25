@@ -21,6 +21,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.EventHooks;
 
 public class TorchLauncherItem extends ProjectileWeaponItem {
 
@@ -50,8 +51,8 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
     }
 
     List<ItemStack> drewProjectileItemStackList = draw(weaponItemStack, projectileItemStack, player);
-    if (level instanceof ServerLevel serverlevel && !drewProjectileItemStackList.isEmpty()) {
-      this.shoot(serverlevel, player, player.getUsedItemHand(), weaponItemStack, drewProjectileItemStackList, power * 3.0F, 1.0F, false, null);
+    if (level instanceof ServerLevel serverLevel && !drewProjectileItemStackList.isEmpty()) {
+      this.shoot(serverLevel, player, player.getUsedItemHand(), weaponItemStack, drewProjectileItemStackList, power * 3.0F, 1.0F, false, null);
     }
     level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F,
         1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F) + power * 0.5F);
@@ -78,23 +79,22 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
   }
 
   @Override
-  public int getUseDuration(ItemStack stack, LivingEntity entity) {
+  public int getUseDuration(ItemStack stack, LivingEntity livingEntity) {
     return 72000;
   }
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-    ItemStack itemStackInHand = player.getItemInHand(hand);
+  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+    ItemStack itemStackInHand = player.getItemInHand(interactionHand);
     boolean hasProjectile = !player.getProjectile(itemStackInHand).isEmpty();
-
-    InteractionResultHolder<ItemStack> ret = net.neoforged.neoforge.event.EventHooks.onArrowNock(itemStackInHand, level, player, hand, hasProjectile);
-    if (ret != null)
-      return ret;
+    InteractionResultHolder<ItemStack> result = EventHooks.onArrowNock(itemStackInHand, level, player, interactionHand, hasProjectile);
+    if (result != null)
+      return result;
 
     if (!player.hasInfiniteMaterials() && !hasProjectile) {
       return InteractionResultHolder.fail(itemStackInHand);
     } else {
-      player.startUsingItem(hand);
+      player.startUsingItem(interactionHand);
       return InteractionResultHolder.consume(itemStackInHand);
     }
   }
@@ -106,7 +106,7 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
   }
 
   @Override
-  public ItemStack getDefaultCreativeAmmo(@Nullable Player player, ItemStack projectileWeaponItem) {
+  public ItemStack getDefaultCreativeAmmo(@Nullable Player player, ItemStack weaponItemStack) {
     return Items.TORCH.getDefaultInstance();
   }
 
@@ -117,7 +117,7 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
 
 
   @Override
-  public UseAnim getUseAnimation(ItemStack stack) {
+  public UseAnim getUseAnimation(ItemStack itemStack) {
     return UseAnim.BOW;
   }
 

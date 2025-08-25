@@ -15,6 +15,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 @EventBusSubscriber(modid = TorchLauncherMod.MODID, value = Dist.CLIENT)
 public class TorchLauncherModEntities {
+
   public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, TorchLauncherMod.MODID);
 
   public static final Supplier<EntityType<TorchLauncherProjectileEntity>> TORCH_LAUNCHER_PROJECTILE_ENTITY =
@@ -25,4 +26,5 @@ public class TorchLauncherModEntities {
   public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) {
     event.registerEntityRenderer(TORCH_LAUNCHER_PROJECTILE_ENTITY.get(), TorchLauncherProjectileEntityRenderer::new);
   }
+
 }

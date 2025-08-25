@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 import jp.atelier_kanata.torchlaunchermod.registry.TorchLauncherModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -31,9 +32,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.event.EventHooks;
 
 public class TorchLauncherProjectileEntity extends Projectile {
-  public static final EntityDataAccessor<ItemStack> DATA_ID_ITEM = SynchedEntityData.defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.ITEM_STACK);
+
+  protected static final EntityDataAccessor<ItemStack> DATA_ID_ITEM_STACK = SynchedEntityData.defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.ITEM_STACK);
+  protected static final EntityDataAccessor<BlockPos> DATA_START_BLOCK_POS = SynchedEntityData.defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.BLOCK_POS);
 
   protected boolean inGround;
 
@@ -43,9 +47,27 @@ public class TorchLauncherProjectileEntity extends Projectile {
 
   public TorchLauncherProjectileEntity(Level level, @Nullable Entity shooter, double x, double y, double z, ItemStack itemStack) {
     super(TorchLauncherModEntities.TORCH_LAUNCHER_PROJECTILE_ENTITY.get(), level);
-    this.setPos(x, y, z);
-    this.entityData.set(DATA_ID_ITEM, itemStack.getItem().getDefaultInstance());
     this.setOwner(shooter);
+    this.setPos(x, y, z);
+    setItemStack(itemStack);
+    getItemStack().remove(DataComponents.INTANGIBLE_PROJECTILE);
+    setStartBlockPos(this.blockPosition());
+  }
+
+  public ItemStack getItemStack() {
+    return this.entityData.get(DATA_ID_ITEM_STACK);
+  }
+
+  protected void setItemStack(ItemStack itemStack) {
+    this.entityData.set(DATA_ID_ITEM_STACK, itemStack.copy());
+  }
+
+  public BlockPos getStartBlockPos() {
+    return this.entityData.get(DATA_START_BLOCK_POS);
+  }
+
+  protected void setStartBlockPos(BlockPos blockPos) {
+    this.entityData.set(DATA_START_BLOCK_POS, blockPos);
   }
 
   @Override
@@ -61,22 +83,12 @@ public class TorchLauncherProjectileEntity extends Projectile {
       return;
     }
 
-    // Player player = null;
-    // if (this.getOwner() instanceof Player p) {
-    // player = p;
-    // }
-    //
-    // BlockPlaceContext context = new BlockPlaceContext(this.level(), player,
-    // InteractionHand.MAIN_HAND, this.entityData.get(DATA_ID_ITEM), result);
-
-
     BlockPos hitBlockPos = result.getBlockPos();
     if (this.level().getBlockState(hitBlockPos).isAir()) {
       return;
     }
 
     Direction direction = ((BlockHitResult) result).getDirection();
-
     BlockPos setBlockPos = switch (direction) {
       case UP -> hitBlockPos.above();
       case EAST -> hitBlockPos.east();
@@ -86,13 +98,13 @@ public class TorchLauncherProjectileEntity extends Projectile {
       case DOWN -> hitBlockPos.below();
     };
     if (!this.level().getBlockState(setBlockPos).canBeReplaced()) {
-      dropItem();
+      dropItemStack();
     } else {
-      BlockState torchBlockState = createTorchBlockState(direction);
-      if (torchBlockState == null || !torchBlockState.canSurvive(this.level(), setBlockPos)) {
-        dropItem();
+      BlockState setBlockState = createTorchBlockState(direction);
+      if (setBlockState == null || !setBlockState.canSurvive(this.level(), setBlockPos)) {
+        dropItemStack();
       } else {
-        level().setBlock(setBlockPos, torchBlockState, 3);
+        level().setBlock(setBlockPos, setBlockState, 3);
         this.gameEvent(GameEvent.BLOCK_PLACE, this.getOwner());
         this.playSound(SoundEvents.WOOD_PLACE, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
       }
@@ -101,8 +113,12 @@ public class TorchLauncherProjectileEntity extends Projectile {
     this.remove(RemovalReason.KILLED);
   }
 
+  private void dropItemStack() {
+    this.spawnAtLocation(getItemStack().copy());
+  }
+
   private BlockState createTorchBlockState(Direction direction) {
-    ItemStack itemStack = this.entityData.get(DATA_ID_ITEM);
+    ItemStack itemStack = getItemStack();
     if (itemStack.is(Items.TORCH)) {
       if (direction == Direction.UP) {
         return Blocks.TORCH.defaultBlockState();
@@ -122,11 +138,6 @@ public class TorchLauncherProjectileEntity extends Projectile {
     } else {
       return itemStack.getItem() instanceof BlockItem ? Block.byItem(itemStack.getItem()).defaultBlockState() : null;
     }
-  }
-
-  private void dropItem() {
-    ItemStack itemStack = this.entityData.get(DATA_ID_ITEM);
-    this.spawnAtLocation(itemStack.copy());
   }
 
   @Override
@@ -153,31 +164,29 @@ public class TorchLauncherProjectileEntity extends Projectile {
 
   private void startFalling() {
     this.inGround = false;
-    Vec3 vec3 = this.getDeltaMovement();
-    this.setDeltaMovement(vec3.multiply((double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F)));
+    this.setDeltaMovement(
+        this.getDeltaMovement().multiply((double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F)));
   }
 
   @Override
   public void tick() {
     super.tick();
-    Vec3 vec3 = this.getDeltaMovement();
+    Vec3 deltaMovement = this.getDeltaMovement();
     if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
-      double d0 = vec3.horizontalDistance();
-      this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * 180.0F / (float) Math.PI));
-      this.setXRot((float) (Mth.atan2(vec3.y, d0) * 180.0F / (float) Math.PI));
+      this.setYRot((float) (Mth.atan2(deltaMovement.x, deltaMovement.z) * 180.0F / (float) Math.PI));
+      this.setXRot((float) (Mth.atan2(deltaMovement.y, deltaMovement.horizontalDistance()) * 180.0F / (float) Math.PI));
       this.yRotO = this.getYRot();
       this.xRotO = this.getXRot();
     }
 
-    BlockPos blockpos = this.blockPosition();
-    BlockState blockstate = this.level().getBlockState(blockpos);
-    if (!blockstate.isAir()) {
-      VoxelShape voxelshape = blockstate.getCollisionShape(this.level(), blockpos);
-      if (!voxelshape.isEmpty()) {
-        Vec3 vec31 = this.position();
-
-        for (AABB aabb : voxelshape.toAabbs()) {
-          if (aabb.move(blockpos).contains(vec31)) {
+    BlockPos blockPos = this.blockPosition();
+    BlockState blockState = this.level().getBlockState(blockPos);
+    Vec3 position = this.position();
+    if (!blockState.isAir()) {
+      VoxelShape voxelShape = blockState.getCollisionShape(this.level(), blockPos);
+      if (!voxelShape.isEmpty()) {
+        for (AABB aabb : voxelShape.toAabbs()) {
+          if (aabb.move(blockPos).contains(position)) {
             this.inGround = true;
             break;
           }
@@ -186,32 +195,19 @@ public class TorchLauncherProjectileEntity extends Projectile {
     }
 
     if (!this.inGround) {
-      Vec3 vec32 = this.position();
-      Vec3 vec33 = vec32.add(vec3);
-      HitResult hitresult = this.level().clip(new ClipContext(vec32, vec33, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-      if (hitresult != null && hitresult.getType() != HitResult.Type.MISS) {
-        if (!net.neoforged.neoforge.event.EventHooks.onProjectileImpact(this, hitresult)) {
-          this.hitTargetOrDeflectSelf(hitresult);
+      HitResult hitResult = this.level().clip(new ClipContext(position, position.add(deltaMovement), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+      if (hitResult != null && hitResult.getType() != HitResult.Type.MISS) {
+        if (!EventHooks.onProjectileImpact(this, hitResult)) {
+          this.hitTargetOrDeflectSelf(hitResult);
           this.hasImpulse = true;
         }
       }
 
-      vec3 = this.getDeltaMovement();
-      double d5 = vec3.x;
-      double d6 = vec3.y;
-      double d1 = vec3.z;
-      double d7 = this.getX() + d5;
-      double d2 = this.getY() + d6;
-      double d3 = this.getZ() + d1;
-      double d4 = vec3.horizontalDistance();
-      this.setYRot((float) (Mth.atan2(d5, d1) * 180.0F / (float) Math.PI));
-      this.setXRot((float) (Mth.atan2(d6, d4) * 180.0F / (float) Math.PI));
-      this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
-      this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
-      float f = 0.99F;
-      this.setDeltaMovement(vec3.scale((double) f));
+      this.setXRot(lerpRotation(this.xRotO, (float) (Mth.atan2(deltaMovement.y, deltaMovement.horizontalDistance()) * 180.0F / (float) Math.PI)));
+      this.setYRot(lerpRotation(this.yRotO, (float) (Mth.atan2(deltaMovement.x, deltaMovement.z) * 180.0F / (float) Math.PI)));
+      this.setDeltaMovement(deltaMovement.scale(0.99D));
       this.applyGravity();
-      this.setPos(d7, d2, d3);
+      this.setPos(this.getX() + deltaMovement.x, this.getY() + deltaMovement.y, this.getZ() + deltaMovement.z);
       this.checkInsideBlocks();
     }
   }
@@ -228,7 +224,8 @@ public class TorchLauncherProjectileEntity extends Projectile {
 
   @Override
   protected void defineSynchedData(Builder builder) {
-    builder.define(DATA_ID_ITEM, new ItemStack(Items.TORCH));
+    builder.define(DATA_ID_ITEM_STACK, new ItemStack(Items.TORCH));
+    builder.define(DATA_START_BLOCK_POS, BlockPos.ZERO);
   }
 
   @Override
@@ -242,4 +239,5 @@ public class TorchLauncherProjectileEntity extends Projectile {
     super.readAdditionalSaveData(compound);
     this.inGround = compound.getBoolean("inGround");
   }
+
 }
