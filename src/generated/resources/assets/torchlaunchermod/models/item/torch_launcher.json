@@ -1,0 +1,53 @@
+{
+  "parent": "minecraft:item/generated",
+  "display": {
+    "firstperson_lefthand": {
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    },
+    "firstperson_righthand": {
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    },
+    "head": {
+      "translation": [
+        2,
+        6.5,
+        0
+      ]
+    },
+    "thirdperson_lefthand": {
+      "scale": [
+        0.625,
+        0.625,
+        0.625
+      ],
+      "translation": [
+        0.25,
+        3.125,
+        1
+      ]
+    },
+    "thirdperson_righthand": {
+      "scale": [
+        0.625,
+        0.625,
+        0.625
+      ],
+      "translation": [
+        -0.25,
+        3.125,
+        1
+      ]
+    }
+  },
+  "textures": {
+    "layer0": "torchlaunchermod:item/torch_launcher"
+  }
+}
