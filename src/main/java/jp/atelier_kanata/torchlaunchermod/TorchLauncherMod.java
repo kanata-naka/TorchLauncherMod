@@ -12,10 +12,10 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-@Mod(TorchLauncherMod.MODID)
+@Mod(TorchLauncherMod.MOD_ID)
 public class TorchLauncherMod {
 
-  public static final String MODID = "torchlaunchermod";
+  public static final String MOD_ID = "torchlaunchermod";
   public static final Logger LOGGER = LogUtils.getLogger();
 
   public TorchLauncherMod(IEventBus modEventBus, ModContainer modContainer) {

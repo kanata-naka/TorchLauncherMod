@@ -25,18 +25,18 @@ public class TorchLauncherProjectileRenderState extends EntityRenderState implem
   public BlockState blockState = Blocks.TORCH.defaultBlockState();
 
   @Override
-  public BlockEntity getBlockEntity(BlockPos pos) {
+  public BlockEntity getBlockEntity(BlockPos blockPos) {
     return null;
   }
 
   @Override
-  public BlockState getBlockState(BlockPos pos) {
-    return pos.equals(this.blockPos) ? this.blockState : Blocks.AIR.defaultBlockState();
+  public BlockState getBlockState(BlockPos blockPos) {
+    return blockPos.equals(this.blockPos) ? this.blockState : Blocks.AIR.defaultBlockState();
   }
 
   @Override
-  public FluidState getFluidState(BlockPos pos) {
-    return this.getBlockState(pos).getFluidState();
+  public FluidState getFluidState(BlockPos blockPos) {
+    return this.getBlockState(blockPos).getFluidState();
   }
 
   @Override

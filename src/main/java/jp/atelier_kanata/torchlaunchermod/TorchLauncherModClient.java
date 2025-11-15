@@ -9,8 +9,8 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
-@Mod(value = TorchLauncherMod.MODID, dist = Dist.CLIENT)
-@EventBusSubscriber(modid = TorchLauncherMod.MODID, value = Dist.CLIENT)
+@Mod(value = TorchLauncherMod.MOD_ID, dist = Dist.CLIENT)
+@EventBusSubscriber(modid = TorchLauncherMod.MOD_ID, value = Dist.CLIENT)
 public class TorchLauncherModClient {
 
   public TorchLauncherModClient(ModContainer container) {

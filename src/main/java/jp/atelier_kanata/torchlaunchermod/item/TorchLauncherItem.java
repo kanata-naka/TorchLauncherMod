@@ -41,7 +41,7 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
     }
 
     int charge = this.getUseDuration(weaponItemStack, livingEntity) - timeLeft;
-    charge = net.neoforged.neoforge.event.EventHooks.onArrowLoose(weaponItemStack, level, player, charge, true);
+    charge = EventHooks.onArrowLoose(weaponItemStack, level, player, charge, true);
     if (charge < 0)
       return false;
 
@@ -103,7 +103,7 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
   @Override
   public Predicate<ItemStack> getAllSupportedProjectiles() {
     // itemStack -> itemStack.is(Items.TORCH) || itemStack.is(Items.SOUL_TORCH)
-    return itemStack -> Config.LAUNCHABLE_ITEMS.get().stream().anyMatch(name -> BuiltInRegistries.ITEM.getKey(itemStack.getItem()).equals(ResourceLocation.parse(name)));
+    return itemStack -> Config.LAUNCHABLE_BLOCKS.get().stream().anyMatch(name -> BuiltInRegistries.ITEM.getKey(itemStack.getItem()).equals(ResourceLocation.parse(name)));
   }
 
   @Override

@@ -12,7 +12,6 @@ import net.minecraft.world.item.Items;
 
 public class TorchLauncherModRecipeProvider extends RecipeProvider {
 
-
   protected TorchLauncherModRecipeProvider(Provider registries, RecipeOutput output) {
     super(registries, output);
   }
@@ -20,13 +19,21 @@ public class TorchLauncherModRecipeProvider extends RecipeProvider {
   @Override
   protected void buildRecipes() {
     shaped(RecipeCategory.TOOLS, TorchLauncherModItems.TORCH_LAUNCHER.get())
+        //
         .pattern("aaa")
+        //
         .pattern("bcb")
+        //
         .pattern(" b ")
+        //
         .define('a', Items.STRING)
+        //
         .define('b', Items.STICK)
+        //
         .define('c', Items.LEATHER)
-        .unlockedBy("has_leather",has(Items.LEATHER))
+        //
+        .unlockedBy("has_leather", has(Items.LEATHER))
+        //
         .save(this.output);
   }
 
@@ -45,4 +52,5 @@ public class TorchLauncherModRecipeProvider extends RecipeProvider {
       return "Torch Lancher Mod Recipes";
     }
   }
+
 }

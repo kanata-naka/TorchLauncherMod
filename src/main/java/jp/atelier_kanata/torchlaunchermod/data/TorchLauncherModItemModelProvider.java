@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 public class TorchLauncherModItemModelProvider extends ModelProvider {
 
   public TorchLauncherModItemModelProvider(PackOutput output) {
-    super(output, TorchLauncherMod.MODID);
+    super(output, TorchLauncherMod.MOD_ID);
   }
 
   @Override

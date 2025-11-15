@@ -43,8 +43,8 @@ public class TorchLauncherProjectileRenderer extends EntityRenderer<TorchLaunche
   }
 
   @Override
-  public boolean shouldRender(TorchLauncherProjectileEntity entity, Frustum frustum, double camX, double camY, double camZ) {
-    return !super.shouldRender(entity, frustum, camX, camY, camZ) ? false : entity.getBlockState() != entity.level().getBlockState(entity.blockPosition());
+  public boolean shouldRender(TorchLauncherProjectileEntity entity, Frustum camera, double camX, double camY, double camZ) {
+    return !super.shouldRender(entity, camera, camX, camY, camZ) ? false : entity.getBlockState() != entity.level().getBlockState(entity.blockPosition());
   }
 
   @Override
