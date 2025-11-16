@@ -12,8 +12,9 @@ public class TorchLauncherModDataProvider {
   public static void gatherData(GatherDataEvent.Client event) {
     event.createProvider(TorchLauncherModEnUsLanguageProvider::new);
     event.createProvider(TorchLauncherModJaJpLanguageProvider::new);
-    event.createProvider(TorchLauncherModItemModelProvider::new);
+    event.createProvider(TorchLauncherModModelProvider::new);
     event.createProvider(TorchLauncherModRecipeProvider.Runner::new);
+    event.createProvider(TorchLauncherModItemTagsProvider::new);
   }
 
 }

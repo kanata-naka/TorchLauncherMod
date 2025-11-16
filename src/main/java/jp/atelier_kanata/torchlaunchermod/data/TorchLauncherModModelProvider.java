@@ -14,9 +14,9 @@ import net.minecraft.client.renderer.item.properties.numeric.UseDuration;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemDisplayContext;
 
-public class TorchLauncherModItemModelProvider extends ModelProvider {
+public class TorchLauncherModModelProvider extends ModelProvider {
 
-  public TorchLauncherModItemModelProvider(PackOutput output) {
+  public TorchLauncherModModelProvider(PackOutput output) {
     super(output, TorchLauncherMod.MOD_ID);
   }
 

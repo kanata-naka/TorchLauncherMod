@@ -18,22 +18,16 @@ public class TorchLauncherModRecipeProvider extends RecipeProvider {
 
   @Override
   protected void buildRecipes() {
-    shaped(RecipeCategory.TOOLS, TorchLauncherModItems.TORCH_LAUNCHER.get())
-        //
-        .pattern("aaa")
-        //
-        .pattern("bcb")
-        //
-        .pattern(" b ")
-        //
-        .define('a', Items.STRING)
-        //
-        .define('b', Items.STICK)
-        //
-        .define('c', Items.LEATHER)
-        //
-        .unlockedBy("has_leather", has(Items.LEATHER))
-        //
+    shaped(RecipeCategory.TOOLS, TorchLauncherModItems.TORCH_LAUNCHER.get()) //
+        .pattern("aaa") //
+        .pattern("bcb") //
+        .pattern(" b ") //
+        .define('a', Items.STRING) //
+        .define('b', Items.STICK) //
+        .define('c', Items.LEATHER) //
+        .unlockedBy("has_string", has(Items.STRING)) //
+        .unlockedBy("has_stick", has(Items.STICK)) //
+        .unlockedBy("has_leather", has(Items.LEATHER)) //
         .save(this.output);
   }
 
