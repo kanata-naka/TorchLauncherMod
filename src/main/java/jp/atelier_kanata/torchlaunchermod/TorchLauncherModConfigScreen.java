@@ -21,30 +21,39 @@ import net.minecraft.world.level.block.Blocks;
 public class TorchLauncherModConfigScreen {
 
   public static Screen create(Screen parent) {
-    final ConfigBuilder builder =
-        ConfigBuilder.create().setParentScreen(parent).setTitle(Component.translatable(TorchLauncherMod.MOD_ID + ".configuration.section.torchlaunchermod.common.toml.title"));
+    final ConfigBuilder builder = ConfigBuilder.create().setParentScreen(parent).setTitle(
+        Component.translatable(TorchLauncherMod.MOD_ID + ".configuration.section.torchlaunchermod.common.toml.title"));
 
     ConfigCategory general = builder.getOrCreateCategory(Component.empty());
     ConfigEntryBuilder entryBuilder = builder.entryBuilder();
+
+    List<Block> currentLaunchableBlockList = TorchLauncherModConfig.LAUNCHABLE_BLOCKS.get().stream() //
+        .map(itemName -> Block.byItem(BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(itemName)))) //
+        .collect(Collectors.toCollection(ArrayList::new));
 
     List<Block> availableBlockList = BuiltInRegistries.ITEM.stream() //
         .map((item) -> Block.byItem(item)) //
         .filter((block) -> block != Blocks.AIR) //
         .sorted(Comparator.comparing(Block::toString)).collect(Collectors.toList());
 
-    general.addEntry(new NestedListListEntry<Block, DropdownBoxEntry<Block>>(Component.translatable(TorchLauncherMod.MOD_ID + ".configuration.launchable_blocks"), // fieldName
-        getLaunchableBlocks(), // value
+    general.addEntry(new NestedListListEntry<Block, DropdownBoxEntry<Block>>(
+        Component.translatable(TorchLauncherMod.MOD_ID + ".configuration.launchable_blocks"), // fieldName
+        currentLaunchableBlockList, // value
         true, // defaultExpand
-        () -> Optional.of(new Component[] {Component.translatable(TorchLauncherMod.MOD_ID + ".configuration.launchable_blocks.tooltip")}), // tooltipSupplier
-        value -> setLaunchableBlocks(value), // saveConsumer
-        () -> getLaunchableBlocks(), // defaultValue
+        () -> Optional.of(new Component[] {
+            Component.translatable(TorchLauncherMod.MOD_ID + ".configuration.launchable_blocks.tooltip") }), // tooltipSupplier
+        value -> TorchLauncherModConfig.LAUNCHABLE_BLOCKS
+            .set(value.stream().map(block -> block.asItem().toString()).collect(Collectors.toList())), // saveConsumer
+        () -> currentLaunchableBlockList, // defaultValue
         entryBuilder.getResetButtonKey(), // resetButtonKey
         true, // deleteButtonEnabled
         false, // insertInFront
         (element, nestedListListEntry) -> { // createNewCell
           Block defaultBlock = element != null ? element : Blocks.TORCH;
           return entryBuilder
-              .startDropdownMenu(Component.empty(), DropdownMenuBuilder.TopCellElementBuilder.ofBlockObject(defaultBlock), DropdownMenuBuilder.CellCreatorBuilder.ofBlockObject())
+              .startDropdownMenu(Component.empty(),
+                  DropdownMenuBuilder.TopCellElementBuilder.ofBlockObject(defaultBlock),
+                  DropdownMenuBuilder.CellCreatorBuilder.ofBlockObject())
               .setDefaultValue(defaultBlock)
               //
               .setSelections(availableBlockList)
@@ -55,16 +64,6 @@ public class TorchLauncherModConfigScreen {
     return builder.setSavingRunnable(() -> {
       TorchLauncherModConfig.SPEC.save();
     }).build();
-  }
-
-  private static List<Block> getLaunchableBlocks() {
-    return TorchLauncherModConfig.LAUNCHABLE_BLOCKS.get().stream() //
-        .map(itemName -> Block.byItem(BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(itemName)))) //
-        .collect(Collectors.toCollection(ArrayList::new));
-  }
-
-  private static void setLaunchableBlocks(List<Block> blockList) {
-    TorchLauncherModConfig.LAUNCHABLE_BLOCKS.set(blockList.stream().map(block -> block.asItem().toString()).collect(Collectors.toList()));
   }
 
 }

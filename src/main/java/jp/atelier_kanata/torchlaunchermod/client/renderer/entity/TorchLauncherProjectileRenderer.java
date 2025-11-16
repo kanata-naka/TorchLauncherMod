@@ -16,7 +16,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.RenderShape;
 import net.neoforged.neoforge.client.RenderTypeHelper;
 
-public class TorchLauncherProjectileRenderer extends EntityRenderer<TorchLauncherProjectileEntity, TorchLauncherProjectileRenderState> {
+public class TorchLauncherProjectileRenderer
+    extends EntityRenderer<TorchLauncherProjectileEntity, TorchLauncherProjectileRenderState> {
 
   private final BlockRenderDispatcher dispatcher;
 
@@ -32,7 +33,8 @@ public class TorchLauncherProjectileRenderer extends EntityRenderer<TorchLaunche
   }
 
   @Override
-  public void extractRenderState(TorchLauncherProjectileEntity entity, TorchLauncherProjectileRenderState reusedState, float partialTick) {
+  public void extractRenderState(TorchLauncherProjectileEntity entity, TorchLauncherProjectileRenderState reusedState,
+      float partialTick) {
     super.extractRenderState(entity, reusedState, partialTick);
     BlockPos blockPos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
     reusedState.level = entity.level();
@@ -43,21 +45,27 @@ public class TorchLauncherProjectileRenderer extends EntityRenderer<TorchLaunche
   }
 
   @Override
-  public boolean shouldRender(TorchLauncherProjectileEntity entity, Frustum camera, double camX, double camY, double camZ) {
-    return !super.shouldRender(entity, camera, camX, camY, camZ) ? false : entity.getBlockState() != entity.level().getBlockState(entity.blockPosition());
+  public boolean shouldRender(TorchLauncherProjectileEntity entity, Frustum camera, double camX, double camY,
+      double camZ) {
+    return !super.shouldRender(entity, camera, camX, camY, camZ) ? false
+        : entity.getBlockState() != entity.level().getBlockState(entity.blockPosition());
   }
 
   @Override
-  public void render(TorchLauncherProjectileRenderState renderState, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+  public void render(TorchLauncherProjectileRenderState renderState, PoseStack poseStack, MultiBufferSource buffer,
+      int packedLight) {
     if (renderState.blockState.getRenderShape() != RenderShape.MODEL) {
       return;
     }
     poseStack.pushPose();
     poseStack.translate(-0.5, 0.0, -0.5);
-    List<BlockModelPart> blockModelPartList = this.dispatcher.getBlockModel(renderState.blockState).collectParts(renderState.level, renderState.blockPos, renderState.blockState,
+    List<BlockModelPart> blockModelPartList = this.dispatcher.getBlockModel(renderState.blockState).collectParts(
+        renderState.level, renderState.blockPos, renderState.blockState,
         RandomSource.create(renderState.blockState.getSeed(renderState.startBlockPos)));
-    this.dispatcher.getModelRenderer().tesselateBlock(renderState, blockModelPartList, renderState.blockState, renderState.blockPos, poseStack,
-        renderType -> buffer.getBuffer(RenderTypeHelper.getMovingBlockRenderType(renderType)), false, OverlayTexture.NO_OVERLAY);
+    this.dispatcher.getModelRenderer().tesselateBlock(renderState, blockModelPartList, renderState.blockState,
+        renderState.blockPos, poseStack,
+        renderType -> buffer.getBuffer(RenderTypeHelper.getMovingBlockRenderType(renderType)), false,
+        OverlayTexture.NO_OVERLAY);
     poseStack.popPose();
     super.render(renderState, poseStack, buffer, packedLight);
   }

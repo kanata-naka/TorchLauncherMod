@@ -38,15 +38,19 @@ import net.neoforged.neoforge.event.EventHooks;
 
 public class TorchLauncherProjectileEntity extends Projectile {
 
-  private static final EntityDataAccessor<BlockPos> DATA_START_BLOCK_POS = SynchedEntityData.defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.BLOCK_POS);
-  private static final EntityDataAccessor<ItemStack> DATA_ID_ITEM_STACK = SynchedEntityData.defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.ITEM_STACK);
-  private static final EntityDataAccessor<Boolean> DATA_IN_GROUND = SynchedEntityData.defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.BOOLEAN);
+  private static final EntityDataAccessor<BlockPos> DATA_START_BLOCK_POS = SynchedEntityData
+      .defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.BLOCK_POS);
+  private static final EntityDataAccessor<ItemStack> DATA_ID_ITEM_STACK = SynchedEntityData
+      .defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.ITEM_STACK);
+  private static final EntityDataAccessor<Boolean> DATA_IN_GROUND = SynchedEntityData
+      .defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.BOOLEAN);
 
   public TorchLauncherProjectileEntity(EntityType<? extends TorchLauncherProjectileEntity> entityType, Level level) {
     super(entityType, level);
   }
 
-  public TorchLauncherProjectileEntity(Level level, @Nullable Entity shooter, double x, double y, double z, ItemStack itemStack) {
+  public TorchLauncherProjectileEntity(Level level, @Nullable Entity shooter, double x, double y, double z,
+      ItemStack itemStack) {
     super(TorchLauncherModEntities.TORCH_LAUNCHER_PROJECTILE_ENTITY.get(), level);
     this.setOwner(shooter);
     this.setPos(x, y, z);
@@ -121,7 +125,8 @@ public class TorchLauncherProjectileEntity extends Projectile {
       } else {
         this.level().setBlock(setBlockPos, setBlockState, 3);
         this.gameEvent(GameEvent.BLOCK_PLACE, this.getOwner());
-        this.playSound(setBlockState.getSoundType(this.level(), setBlockPos, null).getPlaceSound(), 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
+        this.playSound(setBlockState.getSoundType(this.level(), setBlockPos, null).getPlaceSound(), 1.0F,
+            1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
       }
     }
 
@@ -180,7 +185,8 @@ public class TorchLauncherProjectileEntity extends Projectile {
   private void startFalling() {
     setInGround(false);
     this.setDeltaMovement(
-        this.getDeltaMovement().multiply((double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F)));
+        this.getDeltaMovement().multiply((double) (this.random.nextFloat() * 0.2F),
+            (double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F)));
   }
 
   @Override
@@ -204,11 +210,13 @@ public class TorchLauncherProjectileEntity extends Projectile {
 
     if (!isInGround()) {
       Vec3 entityPos = this.position();
-      this.setXRot(lerpRotation(this.getXRot(), (float) (Mth.atan2(deltaMovement.y, deltaMovement.horizontalDistance()) * 180.0F / (float) Math.PI)));
-      this.setYRot(lerpRotation(this.getYRot(), (float) (Mth.atan2(deltaMovement.x, deltaMovement.z) * 180.0F / (float) Math.PI)));
+      this.setXRot(lerpRotation(this.getXRot(),
+          (float) (Mth.atan2(deltaMovement.y, deltaMovement.horizontalDistance()) * 180.0F / (float) Math.PI)));
+      this.setYRot(lerpRotation(this.getYRot(),
+          (float) (Mth.atan2(deltaMovement.x, deltaMovement.z) * 180.0F / (float) Math.PI)));
 
-      BlockHitResult blockHitResult =
-          this.level().clipIncludingBorder(new ClipContext(entityPos, entityPos.add(deltaMovement), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+      BlockHitResult blockHitResult = this.level().clipIncludingBorder(new ClipContext(entityPos,
+          entityPos.add(deltaMovement), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
       this.stepMoveAndHit(blockHitResult);
 
       this.applyInertia(0.99F);

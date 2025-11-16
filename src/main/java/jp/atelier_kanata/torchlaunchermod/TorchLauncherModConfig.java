@@ -11,8 +11,9 @@ public class TorchLauncherModConfig {
 
   private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-  public static final ModConfigSpec.ConfigValue<List<? extends String>> LAUNCHABLE_BLOCKS =
-      BUILDER.defineList("launchable_blocks", List.of("minecraft:torch", "minecraft:soul_torch"), () -> "", TorchLauncherModConfig::validateBlockItemName);
+  public static final ModConfigSpec.ConfigValue<List<? extends String>> LAUNCHABLE_BLOCKS = BUILDER.defineList(
+      "launchable_blocks", List.of("minecraft:torch", "minecraft:soul_torch"), () -> "",
+      TorchLauncherModConfig::validateBlockItemName);
 
   public static final ModConfigSpec SPEC = BUILDER.build();
 

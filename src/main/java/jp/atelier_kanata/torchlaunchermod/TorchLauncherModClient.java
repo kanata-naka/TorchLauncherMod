@@ -22,7 +22,8 @@ public class TorchLauncherModClient {
   @SubscribeEvent
   static void onClientSetup(FMLClientSetupEvent event) {
     if (ModList.get().isLoaded("cloth_config")) {
-      ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> (modContainer, parent) -> TorchLauncherModConfigScreen.create(parent));
+      ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class,
+          () -> (modContainer, parent) -> TorchLauncherModConfigScreen.create(parent));
     }
   }
 

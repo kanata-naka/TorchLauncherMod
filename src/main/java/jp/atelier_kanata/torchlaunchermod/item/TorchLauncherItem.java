@@ -52,9 +52,11 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
 
     List<ItemStack> drewProjectileItemStackList = draw(weaponItemStack, projectileItemStack, player);
     if (level instanceof ServerLevel serverLevel && !drewProjectileItemStackList.isEmpty()) {
-      this.shoot(serverLevel, player, player.getUsedItemHand(), weaponItemStack, drewProjectileItemStackList, power * 3.0F, 1.0F, false, null);
+      this.shoot(serverLevel, player, player.getUsedItemHand(), weaponItemStack, drewProjectileItemStackList,
+          power * 3.0F, 1.0F, false, null);
     }
-    level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F,
+    level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS,
+        1.0F,
         1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F) + power * 0.5F);
     player.awardStat(Stats.ITEM_USED.get(this));
     return true;
@@ -70,13 +72,16 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
   }
 
   @Override
-  protected void shootProjectile(LivingEntity shooter, Projectile projectile, int index, float velocity, float inaccuracy, float angle, LivingEntity target) {
+  protected void shootProjectile(LivingEntity shooter, Projectile projectile, int index, float velocity,
+      float inaccuracy, float angle, LivingEntity target) {
     projectile.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot() + angle, 0.0F, velocity, inaccuracy);
   }
 
   @Override
-  protected Projectile createProjectile(Level level, LivingEntity livingEntity, ItemStack weaponItemStack, ItemStack ammoItemStack, boolean isCrit) {
-    return new TorchLauncherProjectileEntity(level, livingEntity, livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ(), ammoItemStack);
+  protected Projectile createProjectile(Level level, LivingEntity livingEntity, ItemStack weaponItemStack,
+      ItemStack ammoItemStack, boolean isCrit) {
+    return new TorchLauncherProjectileEntity(level, livingEntity, livingEntity.getX(), livingEntity.getEyeY(),
+        livingEntity.getZ(), ammoItemStack);
   }
 
   @Override
@@ -103,7 +108,8 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
   @Override
   public Predicate<ItemStack> getAllSupportedProjectiles() {
     // itemStack -> itemStack.is(Items.TORCH) || itemStack.is(Items.SOUL_TORCH)
-    return itemStack -> TorchLauncherModConfig.LAUNCHABLE_BLOCKS.get().stream().anyMatch(name -> BuiltInRegistries.ITEM.getKey(itemStack.getItem()).equals(ResourceLocation.parse(name)));
+    return itemStack -> TorchLauncherModConfig.LAUNCHABLE_BLOCKS.get().stream()
+        .anyMatch(name -> BuiltInRegistries.ITEM.getKey(itemStack.getItem()).equals(ResourceLocation.parse(name)));
   }
 
   @Override
