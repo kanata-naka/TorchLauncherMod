@@ -14,8 +14,9 @@ public class TorchLauncherModJaJpLanguageProvider extends LanguageProvider {
 
   @Override
   protected void addTranslations() {
+    add("torchlaunchermod.configuration.section.torchlaunchermod.common.toml.title", "トーチランチャーMOD 設定");
     add("torchlaunchermod.configuration.launchable_blocks", "発射可能なブロック");
-    add("torchlaunchermod.configuration.launchable_blocks.tooltip", "発射可能なブロックを設定します");
+    add("torchlaunchermod.configuration.launchable_blocks.tooltip", "トーチランチャーから発射可能なブロックを設定します");
     add("torchlaunchermod.configuration.launchable_blocks.button", "編集");
 
     add("itemGroup.torchlaunchermod", "トーチランチャーMOD");

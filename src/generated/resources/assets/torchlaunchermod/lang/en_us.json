@@ -2,5 +2,8 @@
   "entity.torchlaunchermod.torch_launcher_projectile_entity": "Torch Launcher Projectile",
   "item.torchlaunchermod.torch_launcher": "Torch Launcher",
   "itemGroup.torchlaunchermod": "Torch Launcher Mod",
-  "torchlaunchermod.configuration.launchable_blocks": "Launchable blocks"
+  "torchlaunchermod.configuration.launchable_blocks": "Launchable blocks",
+  "torchlaunchermod.configuration.launchable_blocks.button": "Edit",
+  "torchlaunchermod.configuration.launchable_blocks.tooltip": "List of blocks that can be fired from tourch launchers.",
+  "torchlaunchermod.configuration.section.torchlaunchermod.common.toml.title": "Torch Launcher Mod Configuration"
 }

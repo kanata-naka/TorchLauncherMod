@@ -23,7 +23,7 @@ public class TorchLauncherMod {
     TorchLauncherModCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
     TorchLauncherModEntities.ENTITIES.register(modEventBus);
 
-    modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+    modContainer.registerConfig(ModConfig.Type.COMMON, TorchLauncherModConfig.SPEC);
   }
 
   @SubscribeEvent

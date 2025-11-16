@@ -3,7 +3,7 @@ package jp.atelier_kanata.torchlaunchermod.item;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
-import jp.atelier_kanata.torchlaunchermod.Config;
+import jp.atelier_kanata.torchlaunchermod.TorchLauncherModConfig;
 import jp.atelier_kanata.torchlaunchermod.entity.TorchLauncherProjectileEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -103,7 +103,7 @@ public class TorchLauncherItem extends ProjectileWeaponItem {
   @Override
   public Predicate<ItemStack> getAllSupportedProjectiles() {
     // itemStack -> itemStack.is(Items.TORCH) || itemStack.is(Items.SOUL_TORCH)
-    return itemStack -> Config.LAUNCHABLE_BLOCKS.get().stream().anyMatch(name -> BuiltInRegistries.ITEM.getKey(itemStack.getItem()).equals(ResourceLocation.parse(name)));
+    return itemStack -> TorchLauncherModConfig.LAUNCHABLE_BLOCKS.get().stream().anyMatch(name -> BuiltInRegistries.ITEM.getKey(itemStack.getItem()).equals(ResourceLocation.parse(name)));
   }
 
   @Override

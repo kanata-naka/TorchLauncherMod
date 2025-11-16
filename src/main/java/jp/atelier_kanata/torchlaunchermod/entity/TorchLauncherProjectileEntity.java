@@ -10,7 +10,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.network.syncher.SynchedEntityData.Builder;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -122,7 +121,7 @@ public class TorchLauncherProjectileEntity extends Projectile {
       } else {
         this.level().setBlock(setBlockPos, setBlockState, 3);
         this.gameEvent(GameEvent.BLOCK_PLACE, this.getOwner());
-        this.playSound(SoundEvents.WOOD_PLACE, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
+        this.playSound(setBlockState.getSoundType(this.level(), setBlockPos, null).getPlaceSound(), 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
       }
     }
 

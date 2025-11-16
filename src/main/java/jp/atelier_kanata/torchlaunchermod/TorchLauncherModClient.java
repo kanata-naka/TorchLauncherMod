@@ -3,6 +3,8 @@ package jp.atelier_kanata.torchlaunchermod;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -18,6 +20,10 @@ public class TorchLauncherModClient {
   }
 
   @SubscribeEvent
-  static void onClientSetup(FMLClientSetupEvent event) {}
+  static void onClientSetup(FMLClientSetupEvent event) {
+    if (ModList.get().isLoaded("cloth_config")) {
+      ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> (modContainer, parent) -> TorchLauncherModConfigScreen.create(parent));
+    }
+  }
 
 }
