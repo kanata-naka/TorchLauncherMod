@@ -1,4 +1,4 @@
-package jp.atelier_kanata.torchlaunchermod;
+package jp.atelier_kanata.torchlaunchermod.config;
 
 import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,7 +15,7 @@ public class TorchLauncherModConfig {
       .defineList("launchable_blocks", List.of("minecraft:torch", "minecraft:soul_torch"), () -> "",
           TorchLauncherModConfig::validateBlockItemName);
 
-  static final ModConfigSpec SPEC = BUILDER.build();
+  public static final ModConfigSpec SPEC = BUILDER.build();
 
   private static boolean validateBlockItemName(Object value) {
     return value instanceof String itemName && BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemName))

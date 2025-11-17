@@ -1,10 +1,12 @@
-package jp.atelier_kanata.torchlaunchermod;
+package jp.atelier_kanata.torchlaunchermod.client.gui.screens;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import jp.atelier_kanata.torchlaunchermod.TorchLauncherMod;
+import jp.atelier_kanata.torchlaunchermod.config.TorchLauncherModConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;

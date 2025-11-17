@@ -2,6 +2,7 @@ package jp.atelier_kanata.torchlaunchermod;
 
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
+import jp.atelier_kanata.torchlaunchermod.config.TorchLauncherModConfig;
 import jp.atelier_kanata.torchlaunchermod.registry.TorchLauncherModCreativeModeTabs;
 import jp.atelier_kanata.torchlaunchermod.registry.TorchLauncherModEntities;
 import jp.atelier_kanata.torchlaunchermod.registry.TorchLauncherModItems;
