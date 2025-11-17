@@ -36,44 +36,60 @@ import net.neoforged.neoforge.event.EventHooks;
 
 public class TorchLauncherProjectileEntity extends Projectile {
 
-  protected static final EntityDataAccessor<ItemStack> DATA_ID_ITEM_STACK = SynchedEntityData.defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.ITEM_STACK);
-  protected static final EntityDataAccessor<BlockPos> DATA_START_BLOCK_POS = SynchedEntityData.defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.BLOCK_POS);
-
-  protected boolean inGround;
+  protected static final EntityDataAccessor<BlockPos> DATA_START_BLOCK_POS = SynchedEntityData
+      .defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.BLOCK_POS);
+  protected static final EntityDataAccessor<ItemStack> DATA_ID_ITEM_STACK = SynchedEntityData
+      .defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.ITEM_STACK);
+  private static final EntityDataAccessor<Boolean> DATA_IN_GROUND = SynchedEntityData
+      .defineId(TorchLauncherProjectileEntity.class, EntityDataSerializers.BOOLEAN);
 
   public TorchLauncherProjectileEntity(EntityType<? extends TorchLauncherProjectileEntity> entityType, Level level) {
     super(entityType, level);
   }
 
-  public TorchLauncherProjectileEntity(Level level, @Nullable Entity shooter, double x, double y, double z, ItemStack itemStack) {
+  public TorchLauncherProjectileEntity(Level level, @Nullable Entity shooter, double x, double y, double z,
+      ItemStack itemStack) {
     super(TorchLauncherModEntities.TORCH_LAUNCHER_PROJECTILE_ENTITY.get(), level);
     this.setOwner(shooter);
     this.setPos(x, y, z);
     setItemStack(itemStack);
-    getItemStack().remove(DataComponents.INTANGIBLE_PROJECTILE);
     setStartBlockPos(this.blockPosition());
-  }
-
-  public ItemStack getItemStack() {
-    return this.entityData.get(DATA_ID_ITEM_STACK);
-  }
-
-  protected void setItemStack(ItemStack itemStack) {
-    this.entityData.set(DATA_ID_ITEM_STACK, itemStack.copy());
   }
 
   public BlockPos getStartBlockPos() {
     return this.entityData.get(DATA_START_BLOCK_POS);
   }
 
-  protected void setStartBlockPos(BlockPos blockPos) {
+  private void setStartBlockPos(BlockPos blockPos) {
     this.entityData.set(DATA_START_BLOCK_POS, blockPos);
+  }
+
+  public ItemStack getItemStack() {
+    return this.entityData.get(DATA_ID_ITEM_STACK);
+  }
+
+  private void setItemStack(ItemStack itemStack) {
+    ItemStack itemStackCopy = itemStack.copy();
+    itemStackCopy.remove(DataComponents.INTANGIBLE_PROJECTILE);
+    this.entityData.set(DATA_ID_ITEM_STACK, itemStackCopy);
+  }
+
+  public BlockState getBlockState() {
+    return Block.byItem(getItemStack().getItem()).defaultBlockState();
+  }
+
+  private boolean isInGround() {
+    return this.entityData.get(DATA_IN_GROUND);
+  }
+
+  private void setInGround(boolean inGround) {
+    this.entityData.set(DATA_IN_GROUND, inGround);
   }
 
   @Override
   protected void onHitBlock(BlockHitResult result) {
     super.onHitBlock(result);
-    this.inGround = true;
+    setInGround(true);
 
     if (this.level().isClientSide) {
       return;
@@ -106,7 +122,8 @@ public class TorchLauncherProjectileEntity extends Projectile {
       } else {
         level().setBlock(setBlockPos, setBlockState, 3);
         this.gameEvent(GameEvent.BLOCK_PLACE, this.getOwner());
-        this.playSound(SoundEvents.WOOD_PLACE, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
+        this.playSound(setBlockState.getSoundType(this.level(), setBlockPos, null).getPlaceSound(), 1.0F,
+            1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
       }
     }
 
@@ -151,7 +168,7 @@ public class TorchLauncherProjectileEntity extends Projectile {
   }
 
   private boolean shouldFall() {
-    return this.inGround && this.level().noCollision(new AABB(this.position(), this.position()).inflate(0.06));
+    return isInGround() && this.level().noCollision(new AABB(this.position(), this.position()).inflate(0.06));
   }
 
   @Override
@@ -163,9 +180,10 @@ public class TorchLauncherProjectileEntity extends Projectile {
   }
 
   private void startFalling() {
-    this.inGround = false;
+    setInGround(false);
     this.setDeltaMovement(
-        this.getDeltaMovement().multiply((double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F)));
+        this.getDeltaMovement().multiply((double) (this.random.nextFloat() * 0.2F),
+            (double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F)));
   }
 
   @Override
@@ -187,15 +205,16 @@ public class TorchLauncherProjectileEntity extends Projectile {
       if (!voxelShape.isEmpty()) {
         for (AABB aabb : voxelShape.toAabbs()) {
           if (aabb.move(blockPos).contains(position)) {
-            this.inGround = true;
+            setInGround(true);
             break;
           }
         }
       }
     }
 
-    if (!this.inGround) {
-      HitResult hitResult = this.level().clip(new ClipContext(position, position.add(deltaMovement), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+    if (!isInGround()) {
+      HitResult hitResult = this.level().clip(new ClipContext(position, position.add(deltaMovement),
+          ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
       if (hitResult != null && hitResult.getType() != HitResult.Type.MISS) {
         if (!EventHooks.onProjectileImpact(this, hitResult)) {
           this.hitTargetOrDeflectSelf(hitResult);
@@ -203,8 +222,10 @@ public class TorchLauncherProjectileEntity extends Projectile {
         }
       }
 
-      this.setXRot(lerpRotation(this.xRotO, (float) (Mth.atan2(deltaMovement.y, deltaMovement.horizontalDistance()) * 180.0F / (float) Math.PI)));
-      this.setYRot(lerpRotation(this.yRotO, (float) (Mth.atan2(deltaMovement.x, deltaMovement.z) * 180.0F / (float) Math.PI)));
+      this.setXRot(lerpRotation(this.xRotO,
+          (float) (Mth.atan2(deltaMovement.y, deltaMovement.horizontalDistance()) * 180.0F / (float) Math.PI)));
+      this.setYRot(
+          lerpRotation(this.yRotO, (float) (Mth.atan2(deltaMovement.x, deltaMovement.z) * 180.0F / (float) Math.PI)));
       this.setDeltaMovement(deltaMovement.scale(0.99D));
       this.applyGravity();
       this.setPos(this.getX() + deltaMovement.x, this.getY() + deltaMovement.y, this.getZ() + deltaMovement.z);
@@ -226,18 +247,19 @@ public class TorchLauncherProjectileEntity extends Projectile {
   protected void defineSynchedData(Builder builder) {
     builder.define(DATA_ID_ITEM_STACK, new ItemStack(Items.TORCH));
     builder.define(DATA_START_BLOCK_POS, BlockPos.ZERO);
+    builder.define(DATA_IN_GROUND, false);
   }
 
   @Override
   public void addAdditionalSaveData(CompoundTag compound) {
     super.addAdditionalSaveData(compound);
-    compound.putBoolean("inGround", this.inGround);
+    compound.putBoolean("inGround", isInGround());
   }
 
   @Override
   public void readAdditionalSaveData(CompoundTag compound) {
     super.readAdditionalSaveData(compound);
-    this.inGround = compound.getBoolean("inGround");
+    setInGround(compound.getBoolean("inGround"));
   }
 
 }

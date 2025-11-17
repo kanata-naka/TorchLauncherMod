@@ -14,7 +14,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 public class TorchLauncherModItemModelProvider extends ItemModelProvider {
 
   public TorchLauncherModItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-    super(output, TorchLauncherMod.MODID, existingFileHelper);
+    super(output, TorchLauncherMod.MOD_ID, existingFileHelper);
   }
 
   @Override

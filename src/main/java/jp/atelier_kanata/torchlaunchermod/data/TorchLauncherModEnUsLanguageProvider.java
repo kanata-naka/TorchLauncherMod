@@ -9,13 +9,15 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 public class TorchLauncherModEnUsLanguageProvider extends LanguageProvider {
 
   public TorchLauncherModEnUsLanguageProvider(PackOutput output) {
-    super(output, TorchLauncherMod.MODID, "en_us");
+    super(output, TorchLauncherMod.MOD_ID, "en_us");
   }
 
   @Override
   protected void addTranslations() {
-    add("torchlaunchermod.configuration.launchable_items", "Launchable items");
-    add("itemGroup.torch_launcher_mod", "Torch Launcher Mod");
+    add("torchlaunchermod.configuration.section.torchlaunchermod.common.toml.title", "Torch Launcher Mod Configuration");
+    add("torchlaunchermod.configuration.launchable_blocks", "Launchable blocks");
+    add("torchlaunchermod.configuration.launchable_blocks.tooltip", "List of blocks that can be fired from tourch launchers.");
+    add("torchlaunchermod.configuration.launchable_blocks.button", "Edit");
     add(TorchLauncherModItems.TORCH_LAUNCHER.get(), "Torch Launcher");
     add(TorchLauncherModEntities.TORCH_LAUNCHER_PROJECTILE_ENTITY.get(), "Torch Launcher Projectile");
   }

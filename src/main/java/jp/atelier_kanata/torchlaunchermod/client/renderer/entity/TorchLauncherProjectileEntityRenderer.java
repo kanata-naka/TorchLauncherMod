@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.model.data.ModelData;
 
 @OnlyIn(Dist.CLIENT)
 public class TorchLauncherProjectileEntityRenderer extends EntityRenderer<TorchLauncherProjectileEntity> {
@@ -30,8 +31,9 @@ public class TorchLauncherProjectileEntityRenderer extends EntityRenderer<TorchL
     this.dispatcher = context.getBlockRenderDispatcher();
   }
 
-  public void render(TorchLauncherProjectileEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-    BlockState blockState = Block.byItem(entity.getItemStack().getItem()).defaultBlockState();
+  public void render(TorchLauncherProjectileEntity entity, float entityYaw, float partialTicks, PoseStack poseStack,
+      MultiBufferSource buffer, int packedLight) {
+    BlockState blockState = entity.getBlockState();
     if (blockState.getRenderShape() != RenderShape.MODEL) {
       return;
     }
@@ -47,10 +49,10 @@ public class TorchLauncherProjectileEntityRenderer extends EntityRenderer<TorchL
     BakedModel model = this.dispatcher.getBlockModel(blockState);
     long seed = blockState.getSeed(entity.getStartBlockPos());
     BlockPos blockPos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
-    for (RenderType renderType : model.getRenderTypes(blockState, RandomSource.create(seed), net.neoforged.neoforge.client.model.data.ModelData.EMPTY))
+    for (RenderType renderType : model.getRenderTypes(blockState, RandomSource.create(seed), ModelData.EMPTY))
       this.dispatcher.getModelRenderer().tesselateBlock(level, model, blockState, blockPos, poseStack,
-          buffer.getBuffer(net.neoforged.neoforge.client.RenderTypeHelper.getMovingBlockRenderType(renderType)), false, RandomSource.create(), seed, OverlayTexture.NO_OVERLAY,
-          net.neoforged.neoforge.client.model.data.ModelData.EMPTY, renderType);
+          buffer.getBuffer(net.neoforged.neoforge.client.RenderTypeHelper.getMovingBlockRenderType(renderType)), false,
+          RandomSource.create(), seed, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, renderType);
 
     poseStack.popPose();
 
