@@ -1,4 +1,4 @@
-package jp.atelier_kanata.torchlaunchermod;
+package jp.atelier_kanata.torchlaunchermod.config;
 
 import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;

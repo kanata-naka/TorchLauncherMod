@@ -3,7 +3,7 @@ package jp.atelier_kanata.torchlaunchermod.item;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
-import jp.atelier_kanata.torchlaunchermod.TorchLauncherModConfig;
+import jp.atelier_kanata.torchlaunchermod.config.TorchLauncherModConfig;
 import jp.atelier_kanata.torchlaunchermod.entity.TorchLauncherProjectileEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

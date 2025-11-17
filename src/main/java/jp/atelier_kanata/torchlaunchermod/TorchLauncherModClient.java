@@ -1,5 +1,6 @@
 package jp.atelier_kanata.torchlaunchermod;
 
+import jp.atelier_kanata.torchlaunchermod.client.gui.screens.TorchLauncherModConfigScreen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
