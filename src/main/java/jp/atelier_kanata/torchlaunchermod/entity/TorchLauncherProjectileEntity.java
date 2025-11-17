@@ -58,12 +58,12 @@ public class TorchLauncherProjectileEntity extends Projectile {
     setItemStack(itemStack);
   }
 
-  public BlockState getBlockState() {
-    return Block.byItem(getItemStack().getItem()).defaultBlockState();
-  }
-
   public BlockPos getStartBlockPos() {
     return this.entityData.get(DATA_START_BLOCK_POS);
+  }
+
+  private void setStartBlockPos(BlockPos blockPos) {
+    this.entityData.set(DATA_START_BLOCK_POS, blockPos);
   }
 
   public ItemStack getItemStack() {
@@ -76,15 +76,15 @@ public class TorchLauncherProjectileEntity extends Projectile {
     this.entityData.set(DATA_ID_ITEM_STACK, itemStackCopy);
   }
 
-  private void setStartBlockPos(BlockPos blockPos) {
-    this.entityData.set(DATA_START_BLOCK_POS, blockPos);
+  public BlockState getBlockState() {
+    return Block.byItem(getItemStack().getItem()).defaultBlockState();
   }
 
-  protected boolean isInGround() {
+  private boolean isInGround() {
     return this.entityData.get(DATA_IN_GROUND);
   }
 
-  protected void setInGround(boolean inGround) {
+  private void setInGround(boolean inGround) {
     this.entityData.set(DATA_IN_GROUND, inGround);
   }
 
